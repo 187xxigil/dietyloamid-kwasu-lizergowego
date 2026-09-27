@@ -271,7 +271,7 @@
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            justify-content: space-between;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
         }
@@ -309,6 +309,12 @@
             color: #fff;
         }
 
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .social-links {
             display: flex;
             flex-direction: column;
@@ -337,6 +343,11 @@
             transform: translateX(4px);
             text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
         }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -346,22 +357,30 @@
     <div id="socials-overlay"></div>
 
     <div id="socials-sidebar">
-        <div class="sidebar-header">
-            <span class="sidebar-title">s o c i a l s</span>
-            <button id="close-sidebar">&times;</button>
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <span class="sidebar-title">s o c i a l s</span>
+                <button id="close-sidebar">&times;</button>
+            </div>
+            <div class="social-links">
+                <a href="https://soundcloud.com/ssxrr0w" target="_blank" class="social-item">
+                    <span>---soundcloud...</span>
+                </a>
+                <a href="https://187xxigil.bandcamp.com/" target="_blank" class="social-item">
+                    <span>---bandcamp...</span>
+                </a>
+                <a href="https://instagram.com/__xxigil" target="_blank" class="social-item">
+                    <span>---instagram...</span>
+                </a>
+                <a href="https://genius.com/artists/Srpski" target="_blank" class="social-item">
+                    <span>---genius...</span>
+                </a>
+            </div>
         </div>
-        <div class="social-links">
-            <a href="https://soundcloud.com/ssxrr0w" target="_blank" class="social-item">
-                <span>---soundcloud...</span>
-            </a>
-            <a href="https://187xxigil.bandcamp.com/" target="_blank" class="social-item">
-                <span>---bandcamp...</span>
-            </a>
-            <a href="https://instagram.com/__xxigil" target="_blank" class="social-item">
-                <span>---instagram...</span>
-            </a>
-            <a href="https://genius.com/artists/Srpski" target="_blank" class="social-item">
-                <span>---genius...</span>
+
+        <div class="sidebar-footer">
+            <a href="admin.html" class="social-item">
+                <span>---admin...</span>
             </a>
         </div>
     </div>
@@ -417,7 +436,6 @@
         closeSidebar.addEventListener('click', closeSidebarPanel);
         socialsOverlay.addEventListener('click', closeSidebarPanel);
 
-        // Reszta skryptu strony
         const BIN_ID = '6ab91271ffd5d1605334648f';
         const marqueeElement = document.getElementById('marquee-text-content');
 
