@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <style>
+        @font-face {
+            font-family: 'MojFont';
+            src: url('font.ttf') format('truetype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'MojFont', monospace, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .panel-box {
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+        }
+
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        input:focus {
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        button {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 11px;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="panel-box">
+        <h2>Panel Kontrolny Baneru</h2>
+
+        <label for="master-key">Master Key (JSONBin):</label>
+        <input type="password" id="master-key" placeholder="Wklej swój klucz autoryzacyjny...">
+
+        <label for="new-text">Nowy napis na banerze:</label>
+        <input type="text" id="new-text" placeholder="Wpisz nową treść baneru...">
+
+        <button onclick="updateBanner()">Wysłyij na stronę</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const BIN_ID = '6ab91271ffd5d1605334648f';
+
+        const savedKey = localStorage.getItem('admin_master_key');
+        if (savedKey) {
+            document.getElementById('master-key').value = savedKey;
+        }
+
+        function updateBanner() {
+            const key = document.getElementById('master-key').value.trim();
+            const text = document.getElementById('new-text').value.trim();
+            const status = document.getElementById('status');
+
+            if (!key || !text) {
+                status.style.color = '#ff4444';
+                status.textContent = 'BŁĄD: Wypełnij oba pola!';
+                return;
+            }
+
+            status.style.color = '#aaaaaa';
+            status.textContent = 'Wysyłanie do chmury...';
+
+            fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': key,
+                    'X-Access-Key': key
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.message || 'Niepoprawny Master Key lub błąd połączenia');
+                }
+                return data;
+            })
+            .then(data => {
+                status.style.color = '#00ff88';
+                status.textContent = 'SUKCES: Zmieniono napis na stronie!';
+                localStorage.setItem('admin_master_key', key);
+                document.getElementById('new-text').value = '';
+            })
+            .catch(err => {
+                status.style.color = '#ff4444';
+                status.textContent = 'BŁĄD: ' + err.message;
+            });
+        }
+    </script>
+
+</body>
+</html>
