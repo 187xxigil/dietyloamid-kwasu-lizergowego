@@ -153,7 +153,7 @@
         let currentIndex = 0;
         const audio = document.getElementById('bg-audio');
         const canvas = document.getElementById('canvas');
--
+
         let audioContext = null;
         let visualizer = null;
         let isButterchurnInit = false;
@@ -175,7 +175,7 @@
 
             visualizer.connectAudio(source);
             source.connect(audioContext.destination);
-p
+
             const presets = butterchurnPresets.getPresets();
             const presetKeys = Object.keys(presets);
             const randomPreset = presets[presetKeys[Math.floor(Math.random() * presetKeys.length)]];
