@@ -82,7 +82,7 @@
         function loadMarqueeText() {
             fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`)
                 .then(res => {
-                    if (!res.ok) throw new Error("Błąd sieci");
+                    if (!res.ok) throw new Error("error: brak sieci lub brak dostepu do chmury");
                     return res.json();
                 })
                 .then(data => {
@@ -101,12 +101,12 @@
                     if (extractedText) {
                         marqueeElement.textContent = extractedText;
                     } else {
-                        marqueeElement.textContent = "BRAK TEKSTU W BAZIE";
+                        marqueeElement.textContent = "error: brak danych";
                     }
                 })
                 .catch(err => {
-                    console.error("Błąd pobierania tekstu z JSONBin:", err);
-                    marqueeElement.textContent = "BŁĄD WCZYTYWANIA TEKSTU";
+                    console.error("error:", err);
+                    marqueeElement.textContent = "error";
                 });
         }
 
@@ -116,7 +116,9 @@
             '1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3',
             '6.m4a', '7.m4a', '8.m4a', '9.m4a', '10.m4a',
             '11.m4a', '12.m4a', '13.m4a', '14.m4a', '15.m4a',
-            '16.m4a', '17.m4a', '18.m4a', '19.m4a', '20.m4a'
+            '16.m4a', '17.m4a', '18.m4a', '19.m4a', '20.m4a',
+            '21.mp3', '22.mp3', '23.mp3', '24.mp3', '25.mp3',
+            '26.mp3', '27.mp3'
         ];
 
         function shuffle(array) {
@@ -138,7 +140,7 @@
             
             if (playPromise !== undefined) {
                 playPromise.catch(err => {
-                    console.log("Autoplay zablokowany przez przeglądarkę. Kliknij gdziekolwiek na stronie, aby odtworzyć.", err);
+                    console.log("autoplay zablokowany przez przegladarke. kliknij gdziekolwiek na stronie, aby odtworzyc.", err);
                 });
             }
         }
