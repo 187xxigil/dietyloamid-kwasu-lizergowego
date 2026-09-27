@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/butterchurn-presets"></script>
 
     <style>
+
         @font-face {
             font-family: 'MojFont';
             src: url('MatrixType-Regular.ttf') format('truetype');
@@ -79,9 +80,291 @@
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
         }
+
+        #player-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 16px 22px;
+            border-radius: 6px;
+            backdrop-filter: blur(6px);
+            user-select: none;
+        }
+
+        #disc-icon {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            display: block;
+            flex-shrink: 0;
+            animation: spin 2s linear infinite;
+            animation-play-state: paused;
+            user-select: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        #disc-icon:hover {
+            transform: scale(1.08);
+        }
+
+        #disc-icon.spinning {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 4px 6px;
+            transition: color 0.2s, transform 0.2s, text-shadow 0.2s;
+        }
+
+        .nav-btn:hover {
+            color: #ffffff;
+            transform: scale(1.15);
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+        }
+
+        #track-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+            max-width: 320px;
+        }
+
+        #track-title {
+            font-size: 14px;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+            white-space: normal;
+            word-break: break-word;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+            width: 100%;
+        }
+
+        #track-status {
+            font-size: 11px;
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-top: 6px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            width: 20px;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            transform: rotate(-90deg);
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 18px;
+            background: #ffffff;
+            border: 1px solid #000;
+            border-radius: 2px;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 18px;
+            background: #ffffff;
+            border: 1px solid #000;
+            border-radius: 2px;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+        }
+
+        #socials-toggle {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 30;
+            width: 42px;
+            height: 42px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.2s;
+            user-select: none;
+        }
+
+        #socials-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        #socials-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 39;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #socials-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #socials-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 40;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #socials-sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+        }
+
+        #close-sidebar {
+            background: transparent;
+            border: none;
+            color: #888;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        #close-sidebar:hover {
+            color: #fff;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .social-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .social-item:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+        }
     </style>
 </head>
 <body>
+
+    <button id="socials-toggle" title="Sociale">☰</button>
+
+    <div id="socials-overlay"></div>
+
+    <div id="socials-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">s o c i a l s</span>
+            <button id="close-sidebar">&times;</button>
+        </div>
+        <div class="social-links">
+            <a href="https://soundcloud.com/ssxrr0w" target="_blank" class="social-item">
+                <span>---soundcloud...</span>
+            </a>
+            <a href="https://187xxigil.bandcamp.com/" target="_blank" class="social-item">
+                <span>---bandcamp...</span>
+            </a>
+            <a href="https://instagram.com/__xxigil" target="_blank" class="social-item">
+                <span>---instagram...</span>
+            </a>
+            <a href="https://genius.com/artists/Srpski" target="_blank" class="social-item">
+                <span>---genius...</span>
+            </a>
+        </div>
+    </div>
 
     <div class="marquee-container">
         <span class="marquee-text" id="marquee-text-content">loading...</span>
@@ -93,9 +376,48 @@
 
     <canvas id="canvas"></canvas>
 
+    <div id="player-widget">
+        <img id="disc-icon" src="cd.png" alt="CD" title="Kliknij, aby zatrzymać/wznowić">
+        <div class="player-controls">
+            <button id="prev-btn" class="nav-btn" title="Poprzednia">&lt;&lt;</button>
+            <button id="next-btn" class="nav-btn" title="Następna">&gt;&gt;</button>
+        </div>
+        <div id="track-info">
+            <div id="track-title">---</div>
+            <div id="track-status">volume: 100%</div>
+        </div>
+        <div class="slider-container">
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.01" value="1" title="Głośność">
+        </div>
+    </div>
+
     <audio id="bg-audio" preload="auto" crossorigin="anonymous"></audio>
 
     <script>
+        const socialsToggle = document.getElementById('socials-toggle');
+        const socialsSidebar = document.getElementById('socials-sidebar');
+        const socialsOverlay = document.getElementById('socials-overlay');
+        const closeSidebar = document.getElementById('close-sidebar');
+
+        function openSidebar() {
+            socialsSidebar.classList.add('open');
+            socialsOverlay.classList.add('active');
+        }
+
+        function closeSidebarPanel() {
+            socialsSidebar.classList.remove('open');
+            socialsOverlay.classList.remove('active');
+        }
+
+        socialsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openSidebar();
+        });
+
+        closeSidebar.addEventListener('click', closeSidebarPanel);
+        socialsOverlay.addEventListener('click', closeSidebarPanel);
+
+        // Reszta skryptu strony
         const BIN_ID = '6ab91271ffd5d1605334648f';
         const marqueeElement = document.getElementById('marquee-text-content');
 
@@ -133,12 +455,33 @@
         loadMarqueeText();
 
         const playlist = [
-            '1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3',
-            '6.m4a', '7.m4a', '8.m4a', '9.m4a', '10.m4a',
-            '11.m4a', '12.m4a', '13.m4a', '14.m4a', '15.m4a',
-            '16.m4a', '17.m4a', '18.m4a', '19.m4a', '20.m4a',
-            '21.mp3', '22.mp3', '23.mp3', '24.mp3', '25.mp3',
-            '26.mp3', '27.mp3'
+            { file: '1.mp3', title: 'SADWRIST - měsíc' },
+            { file: '2.mp3', title: 'SADWRIST - NUPSIA (SUMMER LIES)' },
+            { file: '3.mp3', title: 'SADWRIST - Ḅile†P͜uke' },
+            { file: '4.mp3', title: 'SADWRIST - レズビアン' },
+            { file: '5.mp3', title: 'SADWRIST - SUICIDE STYLE 5+' },
+            { file: '6.m4a', title: 'SADWRIST - +​​ɖɨֆօʀɖɛʀɖɨֆօʀɖɛʀɖɨֆօʀɖɛʀ+' },
+            { file: '7.m4a', title: 'SADWRIST - i still see your eyes on my ceiling part. II' },
+            { file: '8.m4a', title: 'SADWRIST - see u' },
+            { file: '9.m4a', title: 'SADWRIST - QUINNSTEP (ラブ)' },
+            { file: '10.m4a', title: 'SADWRIST - ' },
+            { file: '11.m4a', title: 'SADWRIST - ｒｅｓｐｉｒｅ' },
+            { file: '12.m4a', title: 'SADWRIST - (((?¿)))' },
+            { file: '13.m4a', title: 'SADWRIST - ﺠﯟ+ƪƷɮ³ݠᴔᴞᶤᶤ͠͠  ɮ˞˟ˢˠ ﴾ ‹ﮩ• ᶚᶧᶧϬ.,;۱۲۳۴۵۶۶۶ ﴿' },
+            { file: '14.m4a', title: 'SADWRIST - सहूसाहꞆꜙ꞉ᠨᢜᢧᢪ/ᠨᢜᢧᢪᢚᠧᡚᡷᢟᢡᢀᢅꝖꝹ:' },
+            { file: '15.m4a', title: 'SADWRIST -  ' },
+            { file: '16.m4a', title: 'SADWRIST - ∻ 8NF8N8T8 ∻ ' },
+            { file: '17.m4a', title: 'SADWRIST - sarbōtkarsa (সর্বোত্কর্ষ)' },
+            { file: '18.m4a', title: 'SADWRIST - ♠ ♣ ♥ ♦ ♤ ♧ ♡ ♢ ♡ ♧ ♤ ♦ ♥ ♣ ♠' },
+            { file: '19.m4a', title: 'SADWRIST -  ' },
+            { file: '20.m4a', title: 'SADWRIST -  ' },
+            { file: '21.mp3', title: 'srpski - ｢ acͥʥ ‽ яિvɘr ｣' },
+            { file: '22.mp3', title: 'srpski - 4llhri (hiperthermia)' },
+            { file: '23.mp3', title: 'srpski - diphenhydramine ghosts' },
+            { file: '24.mp3', title: 'srpski - ☽☾' },
+            { file: '25.mp3', title: 'srpski - dontcomeback' },
+            { file: '26.mp3', title: 'srpski - ☯☻…༝′°°︺»»»»' },
+            { file: '27.mp3', title: 'srpski - death in december' }
         ];
 
         function shuffle(array) {
@@ -153,10 +496,21 @@
         let currentIndex = 0;
         const audio = document.getElementById('bg-audio');
         const canvas = document.getElementById('canvas');
+        const trackTitleEl = document.getElementById('track-title');
+        const trackStatusEl = document.getElementById('track-status');
+        const volumeSlider = document.getElementById('volume-slider');
+        const discIcon = document.getElementById('disc-icon');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
 
         let audioContext = null;
         let visualizer = null;
         let isButterchurnInit = false;
+        let hasStarted = false;
+
+        let fadeInterval = null;
+        let targetVolume = 1;
+        let isFading = false;
 
         function initButterchurn() {
             if (isButterchurnInit) return;
@@ -202,25 +556,97 @@
             isButterchurnInit = true;
         }
 
+        function fadeIn(duration = 500) {
+            clearInterval(fadeInterval);
+            isFading = true;
+            audio.volume = 0;
+            const step = targetVolume / (duration / 20);
+
+            fadeInterval = setInterval(() => {
+                if (audio.volume + step < targetVolume) {
+                    audio.volume += step;
+                } else {
+                    audio.volume = targetVolume;
+                    clearInterval(fadeInterval);
+                    isFading = false;
+                }
+            }, 20);
+        }
+
+        function fadeOut(duration = 500, onComplete) {
+            clearInterval(fadeInterval);
+            isFading = true;
+            const step = audio.volume / (duration / 20);
+
+            fadeInterval = setInterval(() => {
+                if (audio.volume - step > 0.01) {
+                    audio.volume -= step;
+                } else {
+                    audio.volume = 0;
+                    clearInterval(fadeInterval);
+                    isFading = false;
+                    if (onComplete) onComplete();
+                }
+            }, 20);
+        }
+
         function playTrack(index) {
-            audio.src = playlist[index];
+            const currentItem = playlist[index];
+            audio.src = currentItem.file;
             audio.load();
+            
+            trackTitleEl.textContent = currentItem.title || currentItem.file;
+
             const playPromise = audio.play();
             
             if (playPromise !== undefined) {
-                playPromise.catch(err => {
-                    console.log("autoplay zablokowany przez przegladarke. kliknij gdziekolwiek na stronie, aby odtworzyc.", err);
+                playPromise.then(() => {
+                    fadeIn(500);
+                }).catch(err => {
+                    console.log("autoplay zablokowany przez przegladarke.", err);
                 });
             }
         }
 
+        function nextTrack() {
+            if (!hasStarted) {
+                startAudio();
+                return;
+            }
+            fadeOut(300, () => {
+                currentIndex = (currentIndex + 1) % playlist.length;
+                playTrack(currentIndex);
+            });
+        }
+
+        function prevTrack() {
+            if (!hasStarted) {
+                startAudio();
+                return;
+            }
+            fadeOut(300, () => {
+                currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+                playTrack(currentIndex);
+            });
+        }
+
+        audio.addEventListener('play', () => {
+            discIcon.classList.add('spinning');
+        });
+
+        audio.addEventListener('pause', () => {
+            discIcon.classList.remove('spinning');
+        });
+
         audio.addEventListener('ended', () => {
-            currentIndex = (currentIndex + 1) % playlist.length;
-            if (currentIndex === 0) shuffle(playlist);
-            playTrack(currentIndex);
+            discIcon.classList.remove('spinning');
+            nextTrack();
         });
 
         function startAudio() {
+            if (hasStarted) return;
+            hasStarted = true;
+
             initButterchurn();
 
             if (audioContext && audioContext.state === 'suspended') {
@@ -231,12 +657,47 @@
             
             window.removeEventListener('click', startAudio);
             window.removeEventListener('touchstart', startAudio);
-            window.removeEventListener('keydown', startAudio);
         }
 
         window.addEventListener('click', startAudio);
         window.addEventListener('touchstart', startAudio);
-        window.addEventListener('keydown', startAudio);
+
+        discIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!hasStarted) {
+                startAudio();
+                return;
+            }
+
+            if (isFading) return;
+
+            if (audio.paused) {
+                audio.play();
+                fadeIn(500);
+            } else {
+                fadeOut(500, () => {
+                    audio.pause();
+                });
+            }
+        });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevTrack();
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextTrack();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            targetVolume = parseFloat(e.target.value);
+            if (!isFading) {
+                audio.volume = targetVolume;
+            }
+            trackStatusEl.textContent = `VOLUME: ${Math.round(targetVolume * 100)}%`;
+        });
     </script>
 
 </body>
