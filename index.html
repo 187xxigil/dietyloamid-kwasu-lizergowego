@@ -41,7 +41,6 @@
             z-index: 1;
         }
 
-        /* Pełnoekranowy Canvas dla Butterchurna z nałożeniem na wideo */
         #canvas {
             position: absolute;
             top: 0;
@@ -93,7 +92,6 @@
         <source src="loop.mp4" type="video/mp4">
     </video>
 
-    <!-- Canvas do renderowania wizualizacji Milkdrop -->
     <canvas id="canvas"></canvas>
 
     <audio id="bg-audio" preload="auto" crossorigin="anonymous"></audio>
@@ -156,8 +154,7 @@
         let currentIndex = 0;
         const audio = document.getElementById('bg-audio');
         const canvas = document.getElementById('canvas');
-
-        // --- KONFIGURACJA BUTTERCHURN ---
+-
         let audioContext = null;
         let visualizer = null;
         let isButterchurnInit = false;
@@ -165,7 +162,6 @@
         function initButterchurn() {
             if (isButterchurnInit) return;
 
-            // Ustawienie wymiarów płótna
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
@@ -180,28 +176,24 @@
 
             visualizer.connectAudio(source);
             source.connect(audioContext.destination);
-
-            // Pobranie i załadowanie losowego presetu Milkdrop
+p
             const presets = butterchurnPresets.getPresets();
             const presetKeys = Object.keys(presets);
             const randomPreset = presets[presetKeys[Math.floor(Math.random() * presetKeys.length)]];
             
             visualizer.loadPreset(randomPreset, 0.0);
 
-            // Zmiana presetu co 30 sekund
             setInterval(() => {
                 const nextPreset = presets[presetKeys[Math.floor(Math.random() * presetKeys.length)]];
                 visualizer.loadPreset(nextPreset, 2.7);
             }, 30000);
 
-            // Pętla renderująca
             function renderLoop() {
                 requestAnimationFrame(renderLoop);
                 visualizer.render();
             }
             renderLoop();
 
-            // Dopasowanie rozmiaru do okna
             window.addEventListener('resize', () => {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
