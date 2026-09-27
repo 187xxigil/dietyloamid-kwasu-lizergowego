@@ -4,7 +4,12 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶</title>
+    <title>⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶⓶</title>
+
+    <!-- Skrypty CDN dla Butterchurn i zestawu presetów Milkdrop -->
+    <script src="https://unpkg.com/butterchurn"></script>
+    <script src="https://unpkg.com/butterchurn-presets"></script>
+
     <style>
         @font-face {
             font-family: 'MojFont';
@@ -34,6 +39,20 @@
             top: 0;
             left: 0;
             z-index: 1;
+        }
+
+        /* Pełnoekranowy Canvas dla Butterchurna z nałożeniem na wideo */
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.5;
+            mix-blend-mode: screen;
+            filter: grayscale(100%);
         }
 
         .marquee-container {
@@ -74,7 +93,10 @@
         <source src="loop.mp4" type="video/mp4">
     </video>
 
-    <audio id="bg-audio" preload="auto"></audio>
+    <!-- Canvas do renderowania wizualizacji Milkdrop -->
+    <canvas id="canvas"></canvas>
+
+    <audio id="bg-audio" preload="auto" crossorigin="anonymous"></audio>
 
     <script>
         const BIN_ID = '6ab91271ffd5d1605334648f';
@@ -133,6 +155,61 @@
 
         let currentIndex = 0;
         const audio = document.getElementById('bg-audio');
+        const canvas = document.getElementById('canvas');
+
+        // --- KONFIGURACJA BUTTERCHURN ---
+        let audioContext = null;
+        let visualizer = null;
+        let isButterchurnInit = false;
+
+        function initButterchurn() {
+            if (isButterchurnInit) return;
+
+            // Ustawienie wymiarów płótna
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaElementSource(audio);
+
+            visualizer = butterchurn.default.createVisualizer(audioContext, canvas, {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                pixelRatio: window.devicePixelRatio || 1
+            });
+
+            visualizer.connectAudio(source);
+            source.connect(audioContext.destination);
+
+            // Pobranie i załadowanie losowego presetu Milkdrop
+            const presets = butterchurnPresets.getPresets();
+            const presetKeys = Object.keys(presets);
+            const randomPreset = presets[presetKeys[Math.floor(Math.random() * presetKeys.length)]];
+            
+            visualizer.loadPreset(randomPreset, 0.0);
+
+            // Zmiana presetu co 30 sekund
+            setInterval(() => {
+                const nextPreset = presets[presetKeys[Math.floor(Math.random() * presetKeys.length)]];
+                visualizer.loadPreset(nextPreset, 2.7);
+            }, 30000);
+
+            // Pętla renderująca
+            function renderLoop() {
+                requestAnimationFrame(renderLoop);
+                visualizer.render();
+            }
+            renderLoop();
+
+            // Dopasowanie rozmiaru do okna
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                visualizer.setRendererSize(window.innerWidth, window.innerHeight);
+            });
+
+            isButterchurnInit = true;
+        }
 
         function playTrack(index) {
             audio.src = playlist[index];
@@ -153,6 +230,12 @@
         });
 
         function startAudio() {
+            initButterchurn();
+
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             playTrack(currentIndex);
             
             window.removeEventListener('click', startAudio);
