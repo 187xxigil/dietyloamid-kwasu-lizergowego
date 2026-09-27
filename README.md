@@ -1,0 +1,1 @@
+# dietyloamid-kwasu-lizergowego
