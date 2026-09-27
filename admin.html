@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel</title>
+    <title>admin panel</title>
     <style>
         @font-face {
             font-family: 'MojFont';
@@ -101,15 +101,15 @@
 <body>
 
     <div class="panel-box">
-        <h2>Panel Kontrolny Baneru</h2>
+        <h2>admin panel</h2>
 
-        <label for="master-key">Master Key (JSONBin):</label>
+        <label for="master-key">master key:</label>
         <input type="password" id="master-key" placeholder="Wklej swój klucz autoryzacyjny...">
 
-        <label for="new-text">Nowy napis na banerze:</label>
+        <label for="new-text">input:</label>
         <input type="text" id="new-text" placeholder="Wpisz nową treść baneru...">
 
-        <button onclick="updateBanner()">Wysłyij na stronę</button>
+        <button onclick="updateBanner()">send</button>
 
         <div id="status"></div>
     </div>
@@ -154,13 +154,13 @@
             })
             .then(data => {
                 status.style.color = '#00ff88';
-                status.textContent = 'SUKCES: Zmieniono napis na stronie!';
+                status.textContent = 'success';
                 localStorage.setItem('admin_master_key', key);
                 document.getElementById('new-text').value = '';
             })
             .catch(err => {
                 status.style.color = '#ff4444';
-                status.textContent = 'BŁĄD: ' + err.message;
+                status.textContent = 'error: ' + err.message;
             });
         }
     </script>
