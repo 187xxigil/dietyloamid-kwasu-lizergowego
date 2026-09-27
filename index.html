@@ -10,6 +10,18 @@
     <script src="https://unpkg.com/butterchurn-presets"></script>
 
     <style>
+        #logo-video {
+            position: fixed;
+            top: 40px;
+            right: -40px;
+            width: 240px;
+            height: auto;
+            z-index: 20;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: invert(1);
+            opacity: 0.5;
+        }
 
         @font-face {
             font-family: 'MojFont';
@@ -35,7 +47,7 @@
             width: 100vw;
             height: 100vh;
             object-fit: cover;
-            object-position: 70% center;
+            object-position: 90% center;
             position: absolute;
             top: 0;
             left: 0;
@@ -352,6 +364,10 @@
     </style>
 </head>
 <body>
+
+    <video id="logo-video" autoplay loop muted playsinline>
+    <source src="logo.webm" type="video/webm">
+    </video>
 
     <button id="socials-toggle" title="Sociale">☰</button>
 
